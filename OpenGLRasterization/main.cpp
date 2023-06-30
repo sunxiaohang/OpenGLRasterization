@@ -1,20 +1,23 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include "Renderer.h"
 #include <string>
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
 
-struct ShaderProgramSource {
-	std::string vertexSource;
-	std::string fragmentSource;
-};
 
 enum class ShaderType {
 	None = -1,
 	Vertex = 0,
 	Fragment = 1,
+};
+
+struct ShaderProgramSource {
+	std::string vertexSource;
+	std::string fragmentSource;
 };
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -124,80 +127,63 @@ int main()
 	ShaderProgramSource source = ParseShader("BaseShader.shader");
 	unsigned int shaderProgram = CreateShader(source.vertexSource, source.fragmentSource);
 
-	// set up vertex data (and buffer(s)) and configure vertex attributes
-	// ------------------------------------------------------------------
 	float vertices[] = {
 		 0.5f,  0.5f, 0.0f,  // top right
 		 0.5f, -0.5f, 0.0f,  // bottom right
 		-0.5f, -0.5f, 0.0f,  // bottom left
-		-0.5f,  0.5f, 0.0f   // top left 
+		-0.5f,  0.5f, 0.0f // top left 
 	};
 	unsigned int indices[] = {  // note that we start from 0!
-		0, 1, 3,  // first Triangle
-		1, 2, 3   // second Triangle
+		0, 3, 1,  // first Triangle
+		1, 3, 2   // second Triangle
 	};
-	unsigned int VBO, VAO, EBO;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
-	// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-	glBindVertexArray(VAO);
 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	VertexBuffer vertexBuffer(vertices, 4 * 3 * sizeof(float));
+	IndexBuffer indexBuffer(indices, 2 * 3);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	unsigned int vertexArray;
+	glGenVertexArrays(1, &vertexArray);
+	glBindVertexArray(vertexArray);
 
+	//specific vertices decode rule
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	// note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	GLTryCall(glUseProgram(shaderProgram));
 
-	// remember: do NOT unbind the EBO while a VAO is active as the bound element buffer object IS stored in the VAO; keep the EBO bound.
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	//clear buffer
+	glBindVertexArray(0);
+	GLTryCall(glUseProgram(0));
 
-	// You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-	// VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-
-	// uncomment this call to draw in wireframe polygons.
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	// render loop
-	// -----------
-	while (!glfwWindowShouldClose(window))
+	int location = glGetUniformLocation(shaderProgram, "u_Color");
+	glfwSwapInterval(1);
+	//ASSERT(location != -1);
+	float red = 0.0f;
+	float incremenet = 0.01; 
+	while (!glfwWindowShouldClose(window))// render loop
 	{
-		// input
-		// -----
-		processInput(window);
+		processInput(window);// input
 
-		// render
-		// ------
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);// render
 		glClear(GL_COLOR_BUFFER_BIT);
+		glBindVertexArray(vertexArray);
+		GLTryCall(glUseProgram(shaderProgram));
+		indexBuffer.Bind();
+		glUniform4f(location, red, 0.5f, 0.2f, 1.0f);
+		if (red > 1)incremenet = -0.01;
+		if (red < 0)incremenet = 0.01;
+		red += incremenet;
 
-		// draw our first triangle
-		glUseProgram(shaderProgram);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		// glBindVertexArray(0); // no need to unbind it every time 
-
-		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-		// -------------------------------------------------------------------------------
-		glfwSwapBuffers(window);
+		GLTryCall(glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, NULL));// draw our first triangle
+		       
+		glfwSwapBuffers(window);// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		glfwPollEvents();
 	}
 
-	// optional: de-allocate all resources once they've outlived their purpose:
-	// ------------------------------------------------------------------------
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
-	glDeleteBuffers(1, &EBO);
+	glDeleteVertexArrays(1, &vertexArray);// optional: de-allocate all resources once they've outlived their purpose:
 	glDeleteProgram(shaderProgram);
 
-	// glfw: terminate, clearing all previously allocated GLFW resources.
-	// ------------------------------------------------------------------
-	glfwTerminate();
+	glfwTerminate();// glfw: terminate, clearing all previously allocated GLFW resources.
 	return 0;
 }
 

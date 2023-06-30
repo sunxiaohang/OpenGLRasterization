@@ -1,2 +1,9 @@
-﻿  main.cpp
+﻿  IndexBuffer.cpp
+  main.cpp
+C:\Users\hangsun\source\repos\OpenGLRasterization\OpenGLRasterization\main.cpp(162,25): warning C4305: “初始化”: 从“double”到“float”截断
+C:\Users\hangsun\source\repos\OpenGLRasterization\OpenGLRasterization\main.cpp(173,33): warning C4305: “=”: 从“double”到“float”截断
+C:\Users\hangsun\source\repos\OpenGLRasterization\OpenGLRasterization\main.cpp(174,32): warning C4305: “=”: 从“double”到“float”截断
+  Renderer.cpp
+  VertexBuffer.cpp
+  正在生成代码...
   OpenGLRasterization.vcxproj -> C:\Users\hangsun\source\repos\OpenGLRasterization\x64\Debug\OpenGLRasterization.exe
