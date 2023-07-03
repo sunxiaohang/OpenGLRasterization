@@ -42,6 +42,12 @@
     <ClCompile Include="Utils.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="stb_image.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="BaseShader.shader">
@@ -70,5 +76,16 @@
     <ClInclude Include="Utils.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="vendor\std_image\stb_image.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="github.png">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>

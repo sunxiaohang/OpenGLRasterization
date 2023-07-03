@@ -5,6 +5,7 @@
 #include "IndexBuffer.h"
 #include "VertexArray.h"
 #include "VertexBufferLayout.h"
+#include "Texture.h"
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -45,27 +46,32 @@ int main()
 		return -1;
 	}
 
-
 	float vertices[] = {
-		 0.5f,  0.5f, 0.0f,  // top right
-		 0.5f, -0.5f, 0.0f,  // bottom right
-		-0.5f, -0.5f, 0.0f,  // bottom left
-		-0.5f,  0.5f, 0.0f // top left 
+		 0.5f,  0.5f, 1.0f, 1.0f,  // top right
+		 0.5f, -0.5f, 1.0f, 0.0f,  // bottom right
+		-0.5f, -0.5f, 0.0f, 0.0f,  // bottom left
+		-0.5f,  0.5f, 0.0f, 1.0f // top left 
 	};
 	unsigned int indices[] = {  // note that we start from 0!
 		0, 3, 1,  // first Triangle
 		1, 3, 2   // second Triangle
 	};
-
+	GLTryCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+	glEnable(GL_BLEND);
 	VertexArray vertexArray;
 	VertexBufferLayout layout;
-	layout.Push<float>(3);
-	VertexBuffer vertexBuffer(vertices, 4 * 3 * sizeof(float));
+	layout.Push<float>(2);
+	layout.Push<float>(2);
+	VertexBuffer vertexBuffer(vertices, 4 * 4 * sizeof(float));
 	IndexBuffer indexBuffer(indices, 2 * 3);
 	vertexArray.AddBuffer(vertexBuffer, layout);
 
 	Renderer renderer;
 	Shader shader("BaseShader.shader");
+	Texture texture("github.png");
+	texture.Bind();
+	shader.SetUniform1i("u_Texture",0);
+
 	glfwSwapInterval(1);
 	//ASSERT(location != -1);
 	float red = 0.0f;

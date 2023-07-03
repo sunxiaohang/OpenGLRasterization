@@ -24,6 +24,8 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="stb_image.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="VertexArray.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
@@ -36,10 +38,15 @@
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Utils.h" />
+    <ClInclude Include="vendor\std_image\stb_image.h" />
     <ClInclude Include="VertexArray.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="VertexBufferLayout.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="github.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -103,7 +110,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\OpenglLib\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\hangsun\source\repos\OpenGLRasterization\OpenGLRasterization\vendor;C:\OpenglLib\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\OpenglLib\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
