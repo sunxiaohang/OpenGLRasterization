@@ -7,7 +7,7 @@
 #include <string>
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
-
+#include "VertexArray.h"
 
 enum class ShaderType {
 	None = -1,
@@ -141,19 +141,10 @@ int main()
 	VertexBuffer vertexBuffer(vertices, 4 * 3 * sizeof(float));
 	IndexBuffer indexBuffer(indices, 2 * 3);
 
-	unsigned int vertexArray;
-	glGenVertexArrays(1, &vertexArray);
-	glBindVertexArray(vertexArray);
-
-	//specific vertices decode rule
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	GLTryCall(glUseProgram(shaderProgram));
-
-	//clear buffer
-	glBindVertexArray(0);
-	GLTryCall(glUseProgram(0));
+	VertexArray vertexArray;
+	VertexBufferLayout layout;
+	layout.Push<float>(3);
+	vertexArray.AddBuffer(vertexBuffer, layout);
 
 	int location = glGetUniformLocation(shaderProgram, "u_Color");
 	glfwSwapInterval(1);
@@ -166,9 +157,9 @@ int main()
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);// render
 		glClear(GL_COLOR_BUFFER_BIT);
-		glBindVertexArray(vertexArray);
-		GLTryCall(glUseProgram(shaderProgram));
+		vertexArray.Bind();
 		indexBuffer.Bind();
+		GLTryCall(glUseProgram(shaderProgram));
 		glUniform4f(location, red, 0.5f, 0.2f, 1.0f);
 		if (red > 1)incremenet = -0.01;
 		if (red < 0)incremenet = 0.01;
@@ -179,10 +170,9 @@ int main()
 		glfwSwapBuffers(window);// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		glfwPollEvents();
 	}
-
-	glDeleteVertexArrays(1, &vertexArray);// optional: de-allocate all resources once they've outlived their purpose:
+	vertexArray.UnBind();
+	GLTryCall(glUseProgram(0));
 	glDeleteProgram(shaderProgram);
-
 	glfwTerminate();// glfw: terminate, clearing all previously allocated GLFW resources.
 	return 0;
 }
