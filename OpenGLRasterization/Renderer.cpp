@@ -1,16 +1,15 @@
 #include "Renderer.h"
-#include <iostream>
-void GLClearError()
+
+void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const
 {
-	while (glGetError() != GL_NO_ERROR);
+	va.Bind();
+	ib.Bind();
+	shader.Bind();
+	GLTryCall(glDrawElements(GL_TRIANGLES, sizeof(ib), GL_UNSIGNED_INT, NULL));// draw our first triangle
 }
 
-bool GLLogCall(const char* function, const char* file, int line)
+void Renderer::Clear() const
 {
-	while (GLenum error = glGetError())
-	{
-		std::cout << "[Opengl Error]:(" << error <<")"<< function <<" " << file << ":" << line<< std::endl;
-		return false;
-	}
-	return true;
+	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
 }

@@ -1,7 +1,8 @@
 #pragma once
 
 #include <Vector>
-#include "Renderer.h"
+#include "Utils.h"
+
 struct VertexBufferElement
 {
 	unsigned int type;

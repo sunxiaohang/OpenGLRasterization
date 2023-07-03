@@ -1,5 +1,15 @@
-﻿  main.cpp
-C:\Users\hangsun\source\repos\OpenGLRasterization\OpenGLRasterization\main.cpp(153,25): warning C4305: “初始化”: 从“double”到“float”截断
-C:\Users\hangsun\source\repos\OpenGLRasterization\OpenGLRasterization\main.cpp(164,33): warning C4305: “=”: 从“double”到“float”截断
-C:\Users\hangsun\source\repos\OpenGLRasterization\OpenGLRasterization\main.cpp(165,32): warning C4305: “=”: 从“double”到“float”截断
+﻿  glad.c
+  IndexBuffer.cpp
+  main.cpp
+C:\Users\hangsun\source\repos\OpenGLRasterization\OpenGLRasterization\main.cpp(74,25): warning C4305: “初始化”: 从“double”到“float”截断
+C:\Users\hangsun\source\repos\OpenGLRasterization\OpenGLRasterization\main.cpp(83,33): warning C4305: “=”: 从“double”到“float”截断
+C:\Users\hangsun\source\repos\OpenGLRasterization\OpenGLRasterization\main.cpp(84,32): warning C4305: “=”: 从“double”到“float”截断
+  Renderer.cpp
+  Shader.cpp
+  Utils.cpp
+  VertexArray.cpp
+C:\Users\hangsun\source\repos\OpenGLRasterization\OpenGLRasterization\VertexArray.cpp(23,116): warning C4312: “类型强制转换”: 从“unsigned int”转换到更大的“const void *”
+  VertexBuffer.cpp
+  VertexBufferLayout.cpp
+  正在生成代码...
   OpenGLRasterization.vcxproj -> C:\Users\hangsun\source\repos\OpenGLRasterization\x64\Debug\OpenGLRasterization.exe
