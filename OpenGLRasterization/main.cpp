@@ -6,13 +6,18 @@
 #include "VertexArray.h"
 #include "VertexBufferLayout.h"
 #include "Texture.h"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw_gl3.h"
 
 // settings
 const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_HEIGHT = 800;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
+void DrawImGuiInternal(Shader& shader);
 
 int main()
 {
@@ -66,28 +71,35 @@ int main()
 	IndexBuffer indexBuffer(indices, 2 * 3);
 	vertexArray.AddBuffer(vertexBuffer, layout);
 
+	ImGui::CreateContext();
+	ImGui_ImplGlfwGL3_Init(window, true);
+	ImGui::StyleColorsDark();
+
 	Renderer renderer;
 	Shader shader("BaseShader.shader");
+	shader.Bind();
 	Texture texture("github.png");
 	texture.Bind();
-	shader.SetUniform1i("u_Texture",0);
+	shader.SetUniform1i("u_Texture", 0);
 
 	glfwSwapInterval(1);
 	//ASSERT(location != -1);
-	float red = 0.0f;
-	float incremenet = 0.01; 
 	while (!glfwWindowShouldClose(window))// render loop
 	{
 		processInput(window);// input
 		renderer.Clear();
-		renderer.Draw(vertexArray, indexBuffer, shader);
-		shader.SetUniform4f("u_Color", red, 0.5f, 0.2f, 1.0f);
-		if (red > 1)incremenet = -0.01;
-		if (red < 0)incremenet = 0.01;
-		red += incremenet;		       
+		ImGui_ImplGlfwGL3_NewFrame();
+
+		renderer.Draw(vertexArray, indexBuffer, shader);	       
+
+		DrawImGuiInternal(shader);
+		ImGui::Render();
+		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
 		glfwSwapBuffers(window);// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		glfwPollEvents();
 	}
+	ImGui_ImplGlfwGL3_Shutdown();
+	ImGui::DestroyContext();
 	vertexArray.UnBind();
 	vertexBuffer.UnBind();
 	indexBuffer.UnBind();
@@ -95,6 +107,20 @@ int main()
 	glfwTerminate();// glfw: terminate, clearing all previously allocated GLFW resources.
 	return 0;
 }
+
+void DrawImGuiInternal(Shader& shader)
+{
+	glm::vec3 translation = glm::vec3(0,0,0);
+	ImGui::SliderFloat3("translation", &translation.x, -1.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f    
+	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+	glm::mat4 proj = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
+	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
+	glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
+
+	glm::mat4 mvp = proj * view * model;
+	shader.SetUniformMat4("projection", mvp);
+}
+
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------

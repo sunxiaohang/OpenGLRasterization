@@ -24,20 +24,24 @@ void Shader::UnBind() const
 
 void Shader::SetUniform1i(const std::string& name, int value)
 {
-	auto location = GetUniformLocation(name);
-	GLTryCall(glUniform1i(location, value));
+	GLTryCall(glUniform1i(GetUniformLocation(name), value));
 }
 
 void Shader::SetUniform1f(const std::string& name, float value)
 {
-	auto location = GetUniformLocation(name);
-	GLTryCall(glUniform1f(location, value));
+	GLTryCall(glUniform1f(GetUniformLocation(name), value));
 }
 
 void Shader::SetUniform4f(const std::string& name, float f0, float f1, float f2, float f3)
 {
-	auto location = GetUniformLocation(name);
+	int location = glGetUniformLocation(m_RendererID, name.c_str());
 	GLTryCall(glUniform4f(location, f0, f1, f2, f3));
+}
+
+void Shader::SetUniformMat4(const std::string& name, const glm::mat4& matrix)
+{
+	GLTryCall(int location = glGetUniformLocation(m_RendererID, name.c_str()));
+	GLTryCall(glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]));
 }
 
 int Shader::GetUniformLocation(const std::string& name)

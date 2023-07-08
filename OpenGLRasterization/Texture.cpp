@@ -1,5 +1,5 @@
 #include "Texture.h"
-#include "vendor/std_image/stb_image.h"
+#include "std_image/stb_image.h"
 
 Texture::Texture(const std::string& filePath)
 	:m_RendererID(0),m_FilePath(filePath), m_LocalBuffer(nullptr),m_Width(0),m_Height(0),m_BPP(0)
@@ -25,7 +25,7 @@ Texture::~Texture()
 
 void Texture::Bind(unsigned int slot) const
 {
-	GLTryCall(glActiveTexture(GL_TEXTURE0+slot));
+	GLTryCall(glActiveTexture(GL_TEXTURE0 + slot));
 	GLTryCall(glBindTexture(GL_TEXTURE_2D, m_RendererID));
 }
 
